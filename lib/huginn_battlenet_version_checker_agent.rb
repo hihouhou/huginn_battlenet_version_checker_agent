@@ -1,0 +1,4 @@
+require 'huginn_agent'
+
+#HuginnAgent.load 'huginn_battlenet_version_checker_agent/concerns/my_agent_concern'
+HuginnAgent.register 'huginn_battlenet_version_checker_agent/battlenet_version_checker_agent'
