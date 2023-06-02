@@ -15,6 +15,8 @@ module Agents
 
       `cod_mw2_wz2` can be enabled to monitore new releases about this game.
 
+      `agent` can be enabled to monitore new releases about this game.
+
       `region` can be eu, us or kr.
 
       `expected_receive_period_in_days` is used to determine if the Agent is working. Set it to the maximum number of days
@@ -42,6 +44,7 @@ module Agents
         'debug' => 'false',
         'diablo4' => 'true',
         'cod_mw2_wz2' => 'true',
+        'agent' => 'true',
         'expected_receive_period_in_days' => '15',
       }
     end
@@ -49,6 +52,7 @@ module Agents
     form_configurable :debug, type: :boolean
     form_configurable :diablo4, type: :boolean
     form_configurable :cod_mw2_wz2, type: :boolean
+    form_configurable :agent, type: :boolean
     form_configurable :expected_receive_period_in_days, type: :string
     form_configurable :region, type: :array, values: ['eu', 'us', 'kr']
     def validate_options
@@ -60,6 +64,10 @@ module Agents
 
       if options.has_key?('cod_mw2_wz2') && boolify(options['cod_mw2_wz2']).nil?
         errors.add(:base, "if provided, cod_mw2_wz2 must be true or false")
+      end
+
+      if options.has_key?('agent') && boolify(options['agent']).nil?
+        errors.add(:base, "if provided, agent must be true or false")
       end
 
       if options.has_key?('debug') && boolify(options['debug']).nil?
@@ -104,7 +112,6 @@ module Agents
         memory[game] = payload
       else
         result = payload.select { |entry| entry['Region'] == interpolated['region'] }
-        log result
         result_memory = memory[game].select { |entry| entry['Region'] == interpolated['region'] }
         if result != result_memory
           create_event payload: result[0]
@@ -176,6 +183,11 @@ module Agents
       if interpolated['cod_mw2_wz2'] == 'true'
         product_code = "auks"
         real_name = "Call of Duty: MWII | WZ2.0"
+        get_version(product_code,real_name)
+      end
+      if interpolated['agent'] == 'true'
+        product_code = "agent"
+        real_name = "Battle.net Agent"
         get_version(product_code,real_name)
       end
     end
